@@ -1,0 +1,528 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ==========================================================================
+   VIBRANT PALETTE DESIGN SYSTEM OVERRIDES
+   ========================================================================== */
+
+/* 1. Global Page Typography & Colors */
+#vtu_fintech_root {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Selection background color styling */
+#vtu_fintech_root ::selection {
+  background-color: rgb(79, 70, 229, 0.2) !important;
+  color: #4F46E5 !important;
+}
+
+/* 2. Top-bar System Notification */
+#notification_banner {
+  background-color: #1E293B !important;
+  border-bottom: 1px solid #334155 !important;
+  color: #94A3B8 !important;
+}
+
+#notification_banner .bg-neutral-900 {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+#notification_banner .text-emerald-400 {
+  color: #34D399 !important;
+}
+
+/* 3. Navigation Sidebar Override (Slate 800) */
+#vtu_navigation_sidebar {
+  background-color: #1E293B !important;
+  border-right: 1px solid #334155 !important;
+  color: #FFFFFF !important;
+}
+
+/* Secondary nested blocks in the sidebar */
+#vtu_navigation_sidebar .bg-neutral-900,
+#vtu_navigation_sidebar .bg-neutral-900\/60,
+#vtu_navigation_sidebar .bg-slate-900\/40 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  border: 1px solid #334155 !important;
+}
+
+#vtu_navigation_sidebar .text-white {
+  color: #FFFFFF !important;
+}
+
+#vtu_navigation_sidebar .text-neutral-400,
+#vtu_navigation_sidebar .text-zinc-400 {
+  color: #94A3B8 !important;
+}
+
+/* Sidebar selects controls switch */
+#vtu_navigation_sidebar select {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F1F5F9 !important;
+}
+
+/* Sidebar navigation item dynamics */
+#vtu_navigation_sidebar button {
+  color: #94A3B8 !important;
+  background-color: transparent !important;
+  border-left-color: transparent !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+#vtu_navigation_sidebar button:not(.bg-rose-950\/40):hover {
+  background-color: #334155 !important;
+  color: #FFFFFF !important;
+}
+
+/* Active sidebar element (Indigo 600) */
+#vtu_navigation_sidebar button.bg-emerald-950 {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+  border-left: 4px solid #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+}
+
+/* Sidebar Signout button styling */
+#vtu_navigation_sidebar button.bg-rose-950\/40 {
+  background-color: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #E2E8F0 !important;
+}
+
+#vtu_navigation_sidebar button.bg-rose-950\/40:hover {
+  background-color: #475569 !important;
+  color: #FFFFFF !important;
+}
+
+/* 4. Spend Balance Gradient Card (Premium Indigo to Purple) */
+.bg-gradient-to-br.from-emerald-950.to-neutral-950,
+.bg-gradient-to-br.from-neutral-950.to-sky-950,
+.bg-gradient-to-br.from-neutral-950.to-emerald-950 {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.35) !important;
+  border: none !important;
+  color: #FFFFFF !important;
+  border-radius: 24px !important;
+}
+
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 *,
+.bg-gradient-to-br.from-neutral-950.to-sky-950 *,
+.bg-gradient-to-br.from-neutral-950.to-emerald-950 * {
+  color: #FFFFFF !important;
+}
+
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 .text-emerald-400,
+.bg-gradient-to-br.from-neutral-950.to-sky-950 .text-sky-400 {
+  color: #E0E7FF !important;
+  font-weight: 600 !important;
+}
+
+/* Wallet Action Button styles: Solid White primary */
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 button.bg-emerald-600 {
+  background-color: #FFFFFF !important;
+  color: #4F46E5 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 button.bg-emerald-600:hover {
+  background-color: #F1F5F9 !important;
+}
+
+/* Send resources button styles: Soft overlay white */
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 button.border-neutral-800 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-gradient-to-br.from-emerald-950.to-neutral-950 button.border-neutral-800:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* 5. Pure White Dashboard Blocks and Panels */
+.bg-neutral-950,
+.bg-neutral-900.p-6.sm\:p-8 {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+  border: 1px solid #F1F5F9 !important;
+  border-radius: 24px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Overriding typography inside blocks to Slate 900 */
+.bg-neutral-950 h3,
+.bg-neutral-950 h4,
+.bg-neutral-950 b,
+.bg-neutral-950 .text-white,
+.bg-neutral-950 .font-bold.text-slate-100 {
+  color: #0F172A !important;
+}
+
+/* Adjust colors of descriptive label items */
+.bg-neutral-950 .text-neutral-400 {
+  color: #64748B !important;
+}
+
+.bg-neutral-950 .text-neutral-500 {
+  color: #94A3B8 !important;
+}
+
+/* 6. High-Contrast Tables & In-built Lists */
+.bg-neutral-950 table {
+  border-collapse: collapse !important;
+}
+
+.bg-neutral-950 tr,
+.bg-neutral-950 th,
+.bg-neutral-950 td {
+  border-bottom-color: #F1F5F9 !important;
+}
+
+.bg-neutral-950 tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+.bg-neutral-950 td,
+.bg-neutral-950 td * {
+  color: #334155 !important;
+}
+
+.bg-neutral-950 th {
+  color: #94A3B8 !important;
+}
+
+/* Dynamic view receipt links styling */
+.bg-neutral-950 button.text-emerald-500 {
+  color: #4F46E5 !important;
+  font-weight: 700 !important;
+}
+
+.bg-neutral-950 button.text-emerald-500:hover {
+  color: #3730A3 !important;
+  text-decoration: underline !important;
+}
+
+/* 7. Beautiful Overrides for Services Utility Grid Cards */
+button.bg-neutral-950.hover\:bg-neutral-900,
+button.bg-neutral-950.hover\:bg-neutral-900\/90 {
+  background-color: #FFFFFF !important;
+  border: 1px solid #F1F5F9 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, background-color 0.2s !important;
+}
+
+button.bg-neutral-950.hover\:bg-neutral-900:hover {
+  transform: translateY(-4px) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Re-coloring all icon backgrounds for clean micro-styles */
+.w-10.h-10.bg-yellow-950\/40,
+.w-11.h-11.bg-yellow-950\/40 {
+  background-color: #DBEAFE !important; /* Blue for Airtime */
+  color: #2563EB !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-emerald-950\/40,
+.w-11.h-11.bg-emerald-950\/40 {
+  background-color: #FEE2E2 !important; /* Red for Mobile Data */
+  color: #DC2626 !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-sky-950\/40,
+.w-11.h-11.bg-sky-950\/40 {
+  background-color: #F3E8FF !important; /* Purple for Cable */
+  color: #9333EA !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-amber-950\/40,
+.w-11.h-11.bg-amber-950\/40 {
+  background-color: #FEF9C3 !important; /* Yellow for Power/Electricity */
+  color: #CA8A04 !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-rose-950\/40,
+.w-11.h-11.bg-rose-950\/40 {
+  background-color: #FFE4E6 !important; /* Pink for Exams/Education PIN */
+  color: #E11D48 !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-purple-950\/40,
+.w-11.h-11.bg-purple-950\/40 {
+  background-color: #E0F2FE !important; /* Sky Blue for printing cards */
+  color: #0369A1 !important;
+  border-radius: 12px !important;
+}
+
+.w-10.h-10.bg-neutral-800,
+.w-11.h-11.bg-neutral-800 {
+  background-color: #E0E7FF !important; /* Indigo for Bulk Services node */
+  color: #4F46E5 !important;
+  border-radius: 12px !important;
+}
+
+/* Service label item text sizing standards */
+button.bg-neutral-950.hover\:bg-neutral-900 b.text-neutral-300 {
+  color: #1E293B !important;
+  font-weight: 600 !important;
+}
+
+button.bg-neutral-950.hover\:bg-neutral-900 span.text-neutral-500 {
+  color: #64748B !important;
+}
+
+/* 8. Forms & Nested Input Controls elements styling */
+input.bg-neutral-900,
+select.bg-neutral-900,
+textarea.bg-neutral-900 {
+  background-color: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+  border-radius: 10px !important;
+}
+
+input.bg-neutral-900::placeholder {
+  color: #94A3B8 !important;
+}
+
+input.bg-neutral-900:focus,
+select.bg-neutral-900:focus,
+textarea.bg-neutral-900:focus {
+  border-color: #4F46E5 !important;
+  outline: none !important;
+}
+
+/* Form active custom operator switches */
+.bg-neutral-950 button.bg-emerald-950 {
+  background-color: #E0E7FF !important;
+  border-color: #4F46E5 !important;
+  color: #4F46E5 !important;
+}
+
+.bg-neutral-955 button.bg-neutral-900 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+  color: #475569 !important;
+}
+
+/* Primary Form buttons triggers customization */
+.bg-neutral-950 button.bg-emerald-600 {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.bg-neutral-955 button.bg-emerald-600:hover {
+  background-color: #4338CA !important;
+}
+
+/* Inner nested layout helper areas */
+.bg-neutral-900.p-5.rounded-xl.border {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+.bg-neutral-900.p-5.rounded-xl.border * {
+  color: #334155 !important;
+}
+
+.bg-neutral-900.p-5.rounded-xl.border .text-emerald-450,
+.bg-neutral-900.p-5.rounded-xl.border .text-emerald-400 {
+  color: #10B981 !important;
+  font-weight: 700 !important;
+}
+
+/* Clean status success pill overrides */
+span.bg-emerald-950.text-emerald-400 {
+  background-color: #DCFCE7 !important;
+  color: #15803D !important;
+  border: 1px solid #BBF7D0 !important;
+}
+
+/* 9. Multi-Level Invitation System Block overrides (Dashed custom cards) */
+.bg-rose-950\/40,
+div.bg-rose-950\/40 {
+  background-color: #E2E8F0 !important; /* High-contrast light card container bg for warnings */
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 16px !important;
+  color: #334155 !important;
+}
+
+.bg-rose-950\/40 span.text-rose-300,
+.bg-rose-950\/40 b.text-rose-300 {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+.bg-rose-950\/40 p.text-neutral-400 {
+  color: #475569 !important;
+}
+
+.bg-rose-950\/40 button {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.bg-rose-950\/40 button:hover {
+  background-color: #4338CA !important;
+}
+
+/* Multi-level matrix nested panels */
+.bg-neutral-900.p-3\.5.rounded-xl {
+  background-color: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+.bg-neutral-900.p-3\.5.rounded-xl * {
+  color: #334155 !important;
+}
+
+.bg-neutral-900.p-3\.5.rounded-xl .text-emerald-400 {
+  color: #4F46E5 !important;
+  font-weight: 700 !important;
+}
+
+/* Avatar details lists mapping */
+.bg-sky-950 {
+  background-color: #E0E7FF !important;
+  color: #4F46E5 !important;
+}
+
+.bg-sky-900\/40 {
+  background-color: #DCFCE7 !important;
+  color: #166534 !important;
+}
+
+/* 10. Modals overlay screens structure overrides */
+.fixed.inset-0.bg-neutral-950\/80 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.fixed.inset-0.bg-neutral-950\/80 .bg-neutral-900 {
+  background-color: #FFFFFF !important;
+  border: 1px solid #F1F5F9 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 28px !important;
+}
+
+.fixed.inset-0.bg-neutral-950\/80 h4,
+.fixed.inset-0.bg-neutral-950\/80 .text-slate-100,
+.fixed.inset-0.bg-neutral-950\/80 p.text-white {
+  color: #0F172A !important;
+}
+
+.fixed.inset-0.bg-neutral-950\/80 .text-neutral-400 {
+  color: #64748B !important;
+}
+
+/* Input layout in popups */
+.fixed.inset-0.bg-neutral-950\/80 input,
+.fixed.inset-0.bg-neutral-905\/80 input {
+  background-color: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+/* Modal authorize submit button */
+.fixed.inset-0.bg-neutral-950\/80 button.bg-emerald-600 {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+}
+
+.fixed.inset-0.bg-neutral-950\/80 button.bg-emerald-600:hover {
+  background-color: #4338CA !important;
+}
+
+/* 11. Lock / Splash authentication screen override values */
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 {
+  background: linear-gradient(to bottom, #F8FAFC, #EDF2F7) !important;
+}
+
+/* Splash title centering details */
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 h1,
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 p {
+  color: #0F172A !important;
+}
+
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 .text-neutral-400 {
+  color: #64748B !important;
+}
+
+/* Loading bar background in splash */
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 .bg-neutral-800 {
+  background-color: #E2E8F0 !important;
+}
+
+.bg-gradient-to-b.from-neutral-950.to-neutral-900 .bg-emerald-500 {
+  background-color: #4F46E5 !important;
+}
+
+/* Passcode panel boxes */
+.bg-neutral-900\/50.p-3 {
+  background-color: #FFFFFF !important;
+  border: 1px solid #F1F5F9 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 16px !important;
+}
+
+.bg-neutral-900\/50.p-3 .text-neutral-550,
+.bg-neutral-900\/50.p-3 .text-neutral-500 {
+  color: #94A3B8 !important;
+}
+
+.bg-neutral-900\/50.p-3 b {
+  color: #4F46E5 !important;
+}
+
+/* 12. Security Intrusions Terminal Logs Console (keep logs dark for authentic cyber-feel) */
+.bg-neutral-950 pre.bg-neutral-900 {
+  background-color: #0F172A !important;
+  color: #38BDF8 !important; /* neon cyber blue */
+  border-radius: 16px !important;
+  border: 1px solid #1E293B !important;
+}
+
+.bg-neutral-950 pre.bg-neutral-900 .text-emerald-400 {
+  color: #34D399 !important;
+}
+
+.bg-neutral-950 pre.bg-neutral-900 .text-slate-500 {
+  color: #475569 !important;
+}
+
+/* Copy code display snippets blocks */
+pre.bg-\[\#0a0a0a\] {
+  background-color: #0F172A !important;
+  color: #94A3B8 !important;
+}
+
+/* Footer Section */
+footer#vtu_copyright_footer {
+  background-color: #F1F5F9 !important;
+  border-top: 1px solid #E2E8F0 !important;
+  color: #64748B !important;
+}
+

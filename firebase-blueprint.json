@@ -1,0 +1,128 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account containing authentication links, basic metadata, and KYC level statuses.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Auth UID" },
+        "fullName": { "type": "string", "description": "Full legal name" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "phone": { "type": "string", "description": "Nigerian phone number beginning with 0" },
+        "role": { "type": "string", "enum": ["customer", "agent", "vendor", "admin", "super_admin"] },
+        "kycLevel": { "type": "string", "enum": ["unverified", "tier1", "tier2", "tier3"] },
+        "bvn": { "type": "string", "description": "Verified Bank Verification Number (11 digits)" },
+        "nin": { "type": "string", "description": "Verified National Identification Number (11 digits)" },
+        "referralCode": { "type": "string", "description": "User's unique viral referral code" },
+        "referredBy": { "type": "string", "description": "Referral code of User who invited this user" },
+        "twoFactorEnabled": { "type": "boolean", "description": "Toggles two-factor authentication (2FA)" },
+        "deviceBound": { "type": "boolean", "description": "Locks session to original mobile device identifier" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "fullName", "email", "phone", "role", "kycLevel", "createdAt"]
+    },
+    "Wallet": {
+      "title": "User Wallet",
+      "description": "Financial records ledger containing funds, virtual deposit account mappings and balance restrictions.",
+      "type": "object",
+      "properties": {
+        "walletId": { "type": "string", "description": "Corresponds to Owner UID" },
+        "ownerId": { "type": "string", "description": "User ID of the wallet owner" },
+        "balance": { "type": "number", "description": "Current active spending balance in NGN" },
+        "lockedBalance": { "type": "number", "description": "Locked or reserved balance under escrow/fraud review" },
+        "virtualBankName": { "type": "string", "description": "Monnify or Wema designated deposit account bank Name" },
+        "virtualAccountNumber": { "type": "string", "description": "10-digit primary deposit account number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["walletId", "ownerId", "balance", "lockedBalance", "updatedAt"]
+    },
+    "Transaction": {
+      "title": "Financial Transaction",
+      "description": "Auditable log of purchases, transfers, allocations and fundings inside the VTU core ledger.",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string", "description": "Uniquely generated transaction trace reference" },
+        "ownerId": { "type": "string", "description": "UID of user who performed transaction" },
+        "type": { "type": "string", "enum": ["airtime", "data", "cable", "electricity", "education", "bulk_sms", "funding", "transfer"] },
+        "amount": { "type": "number", "description": "Total gross amount debited or credited" },
+        "network": { "type": "string", "description": "MTN, Glo, Airtel, 9Mobile, DSTV, Eko Electric, etc." },
+        "recipient": { "type": "string", "description": "Target phone number, smartcard, account, or token holder meter number" },
+        "status": { "type": "string", "enum": ["pending", "success", "failed"] },
+        "vtuProvider": { "type": "string", "description": "Underlying API used - VTU_NG, VTUGATE, SME_API" },
+        "commission": { "type": "number", "description": "Earned commission allocated to agent/vendor/referrer" },
+        "description": { "type": "string", "description": "Human-friendly transaction receipt description" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["transactionId", "ownerId", "type", "amount", "status", "createdAt"]
+    },
+    "AgentProfile": {
+      "title": "Agent Multi-Level Records",
+      "description": "Commissions tracking and rank calculations for business network representatives.",
+      "type": "object",
+      "properties": {
+        "agentId": { "type": "string", "description": "UID of the agent" },
+        "commissionBalance": { "type": "number", "description": "Withdrawable commission margins balance" },
+        "agentTier": { "type": "string", "enum": ["bronze", "silver", "gold"] },
+        "monthlyVolume": { "type": "number", "description": "Aggregated transactional value this calendar month" },
+        "refereeCount": { "type": "number", "description": "Active referrers network size" },
+        "totalCommissionsPaid": { "type": "number", "description": "Historical commissions disbursed" }
+      },
+      "required": ["agentId", "commissionBalance", "agentTier", "monthlyVolume", "refereeCount"]
+    },
+    "VtuConfig": {
+      "title": "VTU Provider Route Configurations",
+      "description": "Configurations managing VTU client APIs, endpoints, margins, and active routing keys.",
+      "type": "object",
+      "properties": {
+        "configId": { "type": "string", "description": "Unique provider configuration key" },
+        "primaryProvider": { "type": "string", "enum": ["VTU_NG", "VTUGATE", "SME_API"] },
+        "backupProvider": { "type": "string", "enum": ["VTU_NG", "VTUGATE", "SME_API"] },
+        "autoFailoverEnabled": { "type": "boolean", "description": "Triggers automatic failover to backup if primary responds cold" },
+        "airtimeDiscountPercent": { "type": "number", "description": "General discount margin kept by Super Admin" },
+        "dataProfitMarginPercent": { "type": "number", "description": "Profit margin on utility data packs" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["configId", "primaryProvider", "backupProvider", "autoFailoverEnabled"]
+    },
+    "AuditLog": {
+      "title": "Security Intrusion & Session Log",
+      "description": "Trace logging protecting wallets against unauthorized device bindings and failed authentication.",
+      "type": "object",
+      "properties": {
+        "logId": { "type": "string", "description": "Incrementing UUID tag" },
+        "userId": { "type": "string", "description": "Subject user ID" },
+        "action": { "type": "string", "description": "LOGIN_SUCCESS, LOGIN_FAIL, BVN_UPDATE, INCORRECT_PIN, ANTIBOT_TRIGGER" },
+        "deviceFingerprint": { "type": "string", "description": "Browser user-agent hash or hardware secure-enclave GUID" },
+        "ipAddress": { "type": "string", "description": "Originating request IPv4/IPv6" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["logId", "userId", "action", "deviceFingerprint", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores core authentication profile information and verified BVN/NIN indicators."
+    },
+    "/wallets/{walletId}": {
+      "schema": "Wallet",
+      "description": "Financial records storing standard NGN card-funding points, locked reviews or deposit account listings."
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "The atomic ledger containing VTU orders, cables, electricity utilities, airtime topups and bank statements."
+    },
+    "/agents/{agentId}": {
+      "schema": "AgentProfile",
+      "description": "Stores sales commission statistics, tier ranks, volume sizes and multi-level referral networks."
+    },
+    "/system/vtu_routes": {
+      "schema": "VtuConfig",
+      "description": "Global failover options between VTU.ng and top alternatives, and configurable commission rules."
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Maintains persistent session state maps, failed PIN inputs, security locks, and intrusion patterns."
+    }
+  }
+}

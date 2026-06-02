@@ -1,0 +1,8 @@
+{
+  "name": "Remix: VTU FinTech Platform",
+  "description": "Next-Generation Virtual Top-Up (VTU) FinTech Platform featuring multiple dashboard views, fully simulated airtime/data services, security logging, and developer export resources.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

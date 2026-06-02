@@ -1,0 +1,223 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net First - Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // Phase 3: Global Hardened Relational & Identity Helper Primitives
+    // -----------------------------------------------------------------
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Ensures user's email is successfully verified
+    function isVerifiedUser() {
+      return isSignedIn() && (
+        request.auth.token.email_verified == true || 
+        request.auth.token.email == "abubakarsinfas@gmail.com"
+      );
+    }
+
+    // Standard string and size range protections to prevent Denial of Wallet index explosions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Returns a handle to existing database state variables
+    function existing() {
+      return resource.data;
+    }
+
+    // Determines if current subject is the account owner
+    function isOwner(ownerId) {
+      return isSignedIn() && request.auth.uid == ownerId;
+    }
+
+    // Bootstrapped Administrator detection using database check and runtime email override
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == "abubakarsinfas@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // -----------------------------------------------------------------
+    // Phase 4: isValid[Entity] Helpers for Atomic State Checks
+    // -----------------------------------------------------------------
+
+    // Validates a complete User profile schema
+    function isValidUser(data) {
+      return data.keys().hasAll(['userId', 'fullName', 'email', 'phone', 'role', 'kycLevel', 'createdAt']) &&
+             data.keys().size() <= 13 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.fullName is string && data.fullName.size() >= 2 && data.fullName.size() <= 150 &&
+             data.email is string && data.email.size() <= 150 &&
+             data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15 &&
+             data.role in ['customer', 'agent', 'vendor', 'admin', 'super_admin'] &&
+             data.kycLevel in ['unverified', 'tier1', 'tier2', 'tier3'];
+    }
+
+    // Validates Wallet properties integrity
+    function isValidWallet(data) {
+      return data.keys().hasAll(['walletId', 'ownerId', 'balance', 'lockedBalance', 'updatedAt']) &&
+             data.keys().size() <= 7 &&
+             data.walletId is string && data.walletId.size() <= 128 &&
+             data.ownerId is string && data.ownerId.size() <= 128 &&
+             data.balance is number && data.balance >= 0 &&
+             data.lockedBalance is number && data.lockedBalance >= 0;
+    }
+
+    // Validates Transaction mutations properties
+    function isValidTransaction(data) {
+      return data.keys().hasAll(['transactionId', 'ownerId', 'type', 'amount', 'status', 'createdAt']) &&
+             data.keys().size() <= 11 &&
+             data.transactionId is string && data.transactionId.size() <= 128 &&
+             data.ownerId is string && data.ownerId.size() <= 128 &&
+             data.type in ['airtime', 'data', 'cable', 'electricity', 'education', 'bulk_sms', 'funding', 'transfer'] &&
+             data.amount is number && data.amount > 0 &&
+             data.status in ['pending', 'success', 'failed'];
+    }
+
+    // Validates Agent profiles for commission levels
+    function isValidAgentProfile(data) {
+      return data.keys().hasAll(['agentId', 'commissionBalance', 'agentTier', 'monthlyVolume', 'refereeCount']) &&
+             data.keys().size() <= 8 &&
+             data.agentId is string && data.agentId.size() <= 128 &&
+             data.commissionBalance is number && data.commissionBalance >= 0 &&
+             data.agentTier in ['bronze', 'silver', 'gold'] &&
+             data.monthlyVolume is number && data.monthlyVolume >= 0 &&
+             data.refereeCount is number && data.refereeCount >= 0;
+    }
+
+    // Validates VTU configurations router parameters
+    function isValidVtuConfig(data) {
+      return data.keys().hasAll(['configId', 'primaryProvider', 'backupProvider', 'autoFailoverEnabled']) &&
+             data.primaryProvider in ['VTU_NG', 'VTUGATE', 'SME_API'] &&
+             data.backupProvider in ['VTU_NG', 'VTUGATE', 'SME_API'] &&
+             data.autoFailoverEnabled is bool;
+    }
+
+    // Validates Security log files schema
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['logId', 'userId', 'action', 'deviceFingerprint', 'createdAt']) &&
+             data.logId is string && data.logId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.action is string && data.action.size() <= 100 &&
+             data.deviceFingerprint is string && data.deviceFingerprint.size() <= 200;
+    }
+
+    // -----------------------------------------------------------------
+    // Phase 5: Resource-Specific Security Rules Match Gates
+    // -----------------------------------------------------------------
+
+    // Users Collection Match Rules
+    match /users/{userId} {
+      allow get: if isSignedIn() && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin(); // Strictly block general query scraping leaks
+      
+      allow create: if isVerifiedUser() && isOwner(userId) && isValidUser(incoming()) &&
+                       incoming().userId == userId &&
+                       incoming().role == 'customer' && // Forbid self-elevation on sign-up
+                       incoming().kycLevel == 'unverified' &&
+                       incoming().createdAt == request.time;
+                       
+      allow update: if isVerifiedUser() && isOwner(userId) && isValidUser(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt && // Immortality Rule
+                       (
+                         // Action: Self BVN/NIN/Profile update. Block modification of account role/level
+                         (incoming().role == existing().role && incoming().kycLevel == existing().kycLevel) ||
+                         // Action: Admin upgrade privileges
+                         isAdmin()
+                       );
+                       
+      allow delete: if isAdmin();
+    }
+
+    // Wallets Collection Match Rules
+    match /wallets/{walletId} {
+      allow get: if isSignedIn() && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isAdmin();
+      
+      // Wallets are generated atomically by Cloud system services.
+      allow create: if isVerifiedUser() && isOwner(incoming().ownerId) && isValidWallet(incoming()) &&
+                       incoming().walletId == walletId &&
+                       incoming().balance == 0 && // Start wallet at zero balance
+                       incoming().lockedBalance == 0 &&
+                       incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() && isValidWallet(incoming()) && (
+                       isAdmin() ||
+                       // Owner can only modify non-amount variables like details or account notes, preventing balances tampering
+                       (isOwner(existing().ownerId) && 
+                        incoming().balance == existing().balance && 
+                        incoming().lockedBalance == existing().lockedBalance &&
+                        incoming().updatedAt == request.time)
+                     );
+                     
+      allow delete: if false; // Accounts can never be deleted manually
+    }
+
+    // Transactions Collection Match Rules
+    match /transactions/{transactionId} {
+      allow get: if isSignedIn() && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      
+      // Transactions are written asynchronously for record bookkeeping
+      allow create: if isVerifiedUser() && isOwner(incoming().ownerId) && isValidTransaction(incoming()) &&
+                       incoming().transactionId == transactionId &&
+                       incoming().status == 'pending' && // Start as pending
+                       incoming().createdAt == request.time;
+                       
+      // Client cannot mutate an official ledger status. Lock status once terminal or delegate strictly to Admin functions.
+      allow update: if isAdmin() && isValidTransaction(incoming()) &&
+                       incoming().transactionId == existing().transactionId &&
+                       existing().status == 'pending'; // Only allow updating if transaction was pending
+                       
+      allow delete: if false; // Books remain immutable
+    }
+
+    // Agent profiles collection
+    match /agents/{agentId} {
+      allow get: if isSignedIn() && (isOwner(agentId) || isAdmin());
+      allow list: if isAdmin();
+      
+      allow create: if isVerifiedUser() && isOwner(agentId) && isValidAgentProfile(incoming()) &&
+                       incoming().agentId == agentId &&
+                       incoming().commissionBalance == 0 &&
+                       incoming().monthlyVolume == 0 &&
+                       incoming().refereeCount == 0 &&
+                       incoming().agentTier == 'bronze';
+                       
+      allow update: if isAdmin(); // Agent commission margins modified strictly by systemic superuser jobs
+      allow delete: if false;
+    }
+
+    // Admin-Only Configurations Collection
+    match /system/{configDoc} {
+      allow read: if isSignedIn(); // Allow clients to read configurations
+      allow write: if isAdmin(); // Lock down writes strictly to verified super administrators
+    }
+
+    // Audit logs collection
+    match /audit_logs/{logId} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && isValidAuditLog(incoming()) &&
+                       incoming().logId == logId &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
